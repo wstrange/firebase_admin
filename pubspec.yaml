@@ -9,17 +9,16 @@ environment:
 dependencies:
   clock: ^1.1.0
   x509: ^0.2.2
-  jose: ^0.3.2
+  jose: ^0.3.3
   dotenv: ^4.0.0
-  openid_client: ^0.4.3
-  firebase_dart: ^1.0.9
-  firebase_dart: ^1.0.10
+  openid_client: ^0.4.7
+  firebase_dart: ^1.1.0-dev.9
   path: ^1.8.0
   meta: ^1.4.0
   http: ^0.13.0
   crypto_keys: ^0.3.0
   collection: ^1.15.0
-  gcloud: ^0.8.0
+  gcloud: ^0.8.7
   firebaseapis: ^0.1.2
   snapshot: ^0.2.5
   _discoveryapis_commons: ^1.0.4

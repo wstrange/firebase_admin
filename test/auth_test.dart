@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:firebase_admin/src/auth/auth_api_request.dart';
 import 'package:firebase_admin/testing.dart';
 import 'package:jose/jose.dart';
-import 'package:mockito/mockito.dart';
 import 'package:openid_client/openid_client.dart';
 import 'package:test/test.dart';
-
 import 'resources/mocks.dart' as mocks;
+import 'package:mockito/mockito.dart';
+
 import 'resources/mocks.dart';
 
 Matcher throwsFirebaseError([String? code]) => throwsA(
@@ -431,7 +431,7 @@ void main() {
 
       Future<UserRecord> createUser(Auth auth) => auth.createUser(
             displayName: expectedUserRecord.displayName,
-            photoUrl: expectedUserRecord.photoUrl,
+            photoUrl: Uri.tryParse(expectedUserRecord.photoUrl??''),
             email: expectedUserRecord.email,
             emailVerified: expectedUserRecord.emailVerified,
             password: 'password',
@@ -548,7 +548,7 @@ void main() {
       Future<UserRecord> updateUser(Auth auth, String uid) => auth.updateUser(
             uid,
             displayName: expectedUserRecord.displayName,
-            photoUrl: expectedUserRecord.photoUrl,
+            photoUrl: Uri.tryParse(expectedUserRecord.photoUrl??''),
             email: expectedUserRecord.email,
             emailVerified: expectedUserRecord.emailVerified,
             password: 'password',
