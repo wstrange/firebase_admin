@@ -15,6 +15,7 @@ import '../utils/validator.dart' as validator;
 class FirebaseTokenGenerator {
   final App app;
 
+  // ignore: prefer_function_declarations_over_variables
   static FirebaseTokenGenerator Function(App app) factory =
       (app) => FirebaseTokenGenerator(app);
 

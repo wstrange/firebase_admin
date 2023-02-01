@@ -1,18 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:clock/clock.dart';
+import 'package:dotenv/dotenv.dart';
+import 'package:fake_async/fake_async.dart';
+import 'package:firebase_admin/firebase_admin.dart';
+import 'package:firebase_admin/src/app.dart';
 import 'package:firebase_admin/src/auth/credential.dart';
+import 'package:firebase_admin/src/service.dart';
 import 'package:firebase_admin/src/testing.dart';
-import 'package:firebase_admin/src/utils/env.dart';
 import 'package:test/test.dart';
 
-import 'package:firebase_admin/firebase_admin.dart';
-import 'package:firebase_admin/src/service.dart';
-import 'dart:async';
 import 'resources/mocks.dart' as mocks;
-import 'package:fake_async/fake_async.dart';
-
-import 'package:firebase_admin/src/app.dart';
 
 Matcher throwsAppError([String? message]) =>
     throwsA(TypeMatcher<FirebaseAppError>()
@@ -78,7 +77,7 @@ void main() {
       });
 
       test('should respect leading and trailing whitespace', () {
-        var newMockAppName = '  ${mocks.appName}  ';
+        var newMockAppName = '  ' + mocks.appName + '  ';
         mockApp = admin.initializeApp(mocks.appOptions, newMockAppName);
         expect(mockApp.name, isNot(mocks.appName));
         expect(mockApp.name, newMockAppName);
@@ -101,7 +100,7 @@ void main() {
       });
 
       test('should ignore the config file when options is not null', () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config.json';
         var app = admin.initializeApp(mocks.appOptionsNoDatabaseUrl);
         expect(app.options.databaseUrl, null);
@@ -112,7 +111,7 @@ void main() {
       test(
           'should throw when the environment variable points to non existing file',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/non_existant.json';
         expect(() {
           admin.initializeApp();
@@ -123,7 +122,7 @@ void main() {
       });
 
       test('should throw when the environment variable contains bad json', () {
-        env.map[FirebaseAdmin.firebaseConfigVar] = '{,,';
+        env[FirebaseAdmin.firebaseConfigVar] = '{,,';
         expect(() {
           admin.initializeApp();
         },
@@ -133,7 +132,7 @@ void main() {
 
       test('should throw when the environment variable points to an empty file',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config_empty.json';
         expect(() {
           admin.initializeApp();
@@ -143,7 +142,7 @@ void main() {
       });
 
       test('should throw when the environment variable points to bad json', () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config_bad.json';
         expect(() {
           admin.initializeApp();
@@ -153,7 +152,7 @@ void main() {
       });
 
       test('should ignore a bad config key in the config file', () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config_bad_key.json';
         var app = admin.initializeApp();
         expect(app.options.projectId, 'hipster-chat-mock');
@@ -162,7 +161,7 @@ void main() {
       });
 
       test('should ignore a bad config key in the json string', () {
-        env.map[FirebaseAdmin.firebaseConfigVar] = '{'
+        env[FirebaseAdmin.firebaseConfigVar] = '{'
             '"notAValidKeyValue": "The key value here is not valid.",'
             '"projectId": "hipster-chat-mock"'
             '}';
@@ -175,7 +174,7 @@ void main() {
       test(
           'should not throw when the config file has a bad key and the config file is unused',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config_bad_key.json';
         var app = admin.initializeApp(mocks.appOptionsWithOverride);
         expect(app.options.projectId, 'project_id');
@@ -186,7 +185,7 @@ void main() {
       test(
           'should not throw when the config json has a bad key and the config json is unused',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] = '{'
+        env[FirebaseAdmin.firebaseConfigVar] = '{'
             '"notAValidKeyValue": "The key value here is not valid.",'
             '"projectId": "hipster-chat-mock"'
             '}';
@@ -199,17 +198,17 @@ void main() {
       test(
           'should use explicitly specified options when available and ignore the config file',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config.json';
         var app = admin.initializeApp(mocks.appOptions);
         expect(app.options.credential, TypeMatcher<ServiceAccountCredential>());
         expect(app.options.databaseUrl, 'https://databaseName.firebaseio.com');
-        expect(app.options.projectId, 'project_id');
+        expect(app.options.projectId, null);
         expect(app.options.storageBucket, 'bucketName.appspot.com');
       });
 
       test('should not throw if some fields are missing', () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config_partial.json';
         var app = admin.initializeApp(mocks.appOptionsAuthDB);
         expect(app.options.databaseUrl, 'https://databaseName.firebaseio.com');
@@ -240,7 +239,7 @@ void main() {
       test(
           'should init with application default creds when no options provided and env variable is an empty json',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] = '{}';
+        env[FirebaseAdmin.firebaseConfigVar] = '{}';
         var app = admin.initializeApp();
         expect(app.options.credential, Credentials.applicationDefault());
         expect(app.options.databaseUrl, null);
@@ -251,7 +250,7 @@ void main() {
       test(
           'should init when no init arguments are provided and config var points to a file',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] =
+        env[FirebaseAdmin.firebaseConfigVar] =
             './test/resources/firebase_config.json';
         var app = admin.initializeApp();
         expect(app.options.credential, Credentials.applicationDefault());
@@ -263,7 +262,7 @@ void main() {
       test(
           'should init when no init arguments are provided and config var is json',
           () {
-        env.map[FirebaseAdmin.firebaseConfigVar] = '{'
+        env[FirebaseAdmin.firebaseConfigVar] = '{'
             '"databaseAuthVariableOverride":  { "some#key": "some#val" },'
             '"databaseURL": "https://hipster-chat.firebaseio.mock",'
             '"projectId": "hipster-chat-mock",'

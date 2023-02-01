@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:firebase_admin/src/utils/error.dart';
 
 import '../credential.dart';
-import 'package:clock/clock.dart';
 
 class FirebaseAppInternals {
   final Credential credential;

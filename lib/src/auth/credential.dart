@@ -1,13 +1,15 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:convert';
-import 'package:x509/x509.dart';
-import '../utils/error.dart';
+import 'dart:io';
+
+import 'package:clock/clock.dart';
 import 'package:http/http.dart' as http;
 import 'package:jose/jose.dart';
-import '../credential.dart';
-import 'package:clock/clock.dart';
 import 'package:openid_client/openid_client.dart' as openid;
+import 'package:x509/x509.dart';
+
+import '../credential.dart';
+import '../utils/error.dart';
 
 /// Contains the properties necessary to use service-account JSON credentials.
 class Certificate {
@@ -42,12 +44,12 @@ class Certificate {
     var keyPair = (v is PrivateKeyInfo) ? v.keyPair : (v as KeyPair?)!;
     var pKey = keyPair.privateKey as RsaPrivateKey;
 
-    String bytesToBase64(List<int> bytes) {
+    String _bytesToBase64(List<int> bytes) {
       return base64Url.encode(bytes).replaceAll('=', '');
     }
 
-    String intToBase64(BigInt v) {
-      return bytesToBase64(v
+    String _intToBase64(BigInt v) {
+      return _bytesToBase64(v
           .toRadixString(16)
           .replaceAllMapped(RegExp('[0-9a-f]{2}'), (m) => '${m.group(0)},')
           .split(',')
@@ -58,10 +60,10 @@ class Certificate {
 
     var k = JsonWebKey.fromJson({
       'kty': 'RSA',
-      'n': intToBase64(pKey.modulus),
-      'd': intToBase64(pKey.privateExponent),
-      'p': intToBase64(pKey.firstPrimeFactor),
-      'q': intToBase64(pKey.secondPrimeFactor),
+      'n': _intToBase64(pKey.modulus),
+      'd': _intToBase64(pKey.privateExponent),
+      'p': _intToBase64(pKey.firstPrimeFactor),
+      'q': _intToBase64(pKey.secondPrimeFactor),
       'alg': 'RS256',
       'kid': json['private_key_id']
     });
