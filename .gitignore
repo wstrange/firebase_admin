@@ -11,3 +11,7 @@ build/
 doc/api/
 
 *.iml
+.idea/
+
+# secrets
+service-account.json

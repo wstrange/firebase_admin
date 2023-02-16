@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_admin/src/firestore/FirebaseFirestore.dart';
 import 'package:firebase_admin/src/storage.dart';
 
 import '../firebase_admin.dart';
 import 'app/app.dart';
 import 'database.dart';
+import 'firestore.dart';
 import 'service.dart';
 
 /// Represents initialized Firebase application and provides access to the
@@ -46,6 +48,8 @@ class App {
 
   /// Gets Realtime [Database] client for this application.
   Database database() => _getService(() => Database(this));
+
+  Firestore firestore() => _getService(() => Firestore(this));
 
   /// Gets [Storage] service for this application.
   Storage storage() => _getService(() => Storage(this));

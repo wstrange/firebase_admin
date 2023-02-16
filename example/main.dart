@@ -15,22 +15,37 @@ void main() async {
   // set the env variable FIREBASE_CLIENT_ID and FIREBASE_CLIENT_SECRET
   credential ??= await Credentials.login();
 
-  var projectId = 'some-project';
+  var projectId = 'alpine-e4c87';
   // create an app
   var app = FirebaseAdmin.instance.initializeApp(AppOptions(
       credential: credential,
       projectId: projectId,
       storageBucket: '$projectId.appspot.com'));
+  //
+  // try {
+  //   // get a user by email
+  //   var v = await app.auth().getUserByEmail('warren.strange@gmail.com');
+  //   print(v.toJson());
+  // } on FirebaseException catch (e) {
+  //   print(e.message);
+  // }
+  //
+  // await for (var v in app.storage().bucket().list()) {
+  //   print(v.name);
+  // }
+
+  // Try firestore api
 
   try {
-    // get a user by email
-    var v = await app.auth().getUserByEmail('jane@doe.com');
-    print(v.toJson());
-  } on FirebaseException catch (e) {
-    print(e.message);
+    var fs = app.firestore();
+
+    var d = await fs.collection('userProfile').doc('BEBgTk0T3zZ7ges4MmwmK5uUUca2').get();
+
+    var data = d.data();
+    print('Got data $data');
+  }
+  catch(e) {
+    print('error firestore $e');
   }
 
-  await for (var v in app.storage().bucket().list()) {
-    print(v.name);
-  }
 }
